@@ -18,7 +18,6 @@ INSTALL_REQUIRES = [
     # HF dependencies
     "transformers",
     "accelerate",
-    "datasets",
     # Hydra
     "hydra-core",
     "omegaconf",

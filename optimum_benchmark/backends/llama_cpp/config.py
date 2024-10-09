@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from ...import_utils import llama_cpp_version
+from ...import_utils import nexa_sdk_version
 from ..config import BackendConfig
 
 
 @dataclass
 class LlamaCppConfig(BackendConfig):
     name: str = "llama_cpp"
-    version: Optional[str] = llama_cpp_version()
+    version: Optional[str] = nexa_sdk_version()
     _target_: str = "optimum_benchmark.backends.llama_cpp.backend.LlamaCppBackend"
 
     no_weights: bool = False

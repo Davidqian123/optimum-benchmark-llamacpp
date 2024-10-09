@@ -5,13 +5,6 @@ from typing import Optional
 
 import huggingface_hub
 
-from .backends.diffusers_utils import (
-    TASKS_TO_MODEL_TYPES_TO_MODEL_CLASSES as DIFFUSERS_TASKS_TO_MODEL_TYPES_TO_MODEL_CLASSES,
-)
-from .backends.diffusers_utils import (
-    get_diffusers_pretrained_config,
-)
-from .backends.timm_utils import get_timm_pretrained_config
 from .backends.transformers_utils import (
     TASKS_TO_MODEL_LOADERS,
     get_transformers_pretrained_config,
@@ -104,10 +97,6 @@ def infer_library_from_model_name_or_path(
             " because it's neither a repo nor a directory."
         )
 
-    # for now, we still use transformers for sentence-transformers
-    if inferred_library_name == "sentence-transformers":
-        inferred_library_name = "transformers"
-
     return inferred_library_name
 
 
@@ -122,26 +111,8 @@ def infer_task_from_model_name_or_path(
 
     inferred_task_name = None
 
-    if library_name == "timm":
-        inferred_task_name = "image-classification"
-
-    elif library_name == "sentence-transformers":
-        inferred_task_name = "feature-extraction"
-
-    elif os.path.isdir(model_name_or_path):
-        if library_name == "diffusers":
-            diffusers_config = get_diffusers_pretrained_config(model_name_or_path, revision=revision, token=token)
-            class_name = diffusers_config["_class_name"]
-
-            for task_name, model_mapping in DIFFUSERS_TASKS_TO_MODEL_TYPES_TO_MODEL_CLASSES.items():
-                for model_type, model_class_name in model_mapping.items():
-                    if class_name == model_class_name:
-                        inferred_task_name = task_name
-                        break
-                if inferred_task_name is not None:
-                    break
-
-        elif library_name == "transformers":
+    if os.path.isdir(model_name_or_path):
+        if library_name == "transformers":
             transformers_config = get_transformers_pretrained_config(model_name_or_path, revision=revision, token=token)
             auto_modeling_module = importlib.import_module("transformers.models.auto.modeling_auto")
             model_type = transformers_config.model_type
@@ -199,22 +170,6 @@ def infer_model_type_from_model_name_or_path(
 
     if library_name == "llama_cpp":
         inferred_model_type = "llama_cpp"
-
-    elif library_name == "timm":
-        timm_config = get_timm_pretrained_config(model_name_or_path)
-        inferred_model_type = timm_config.architecture
-
-    elif library_name == "diffusers":
-        config = get_diffusers_pretrained_config(model_name_or_path, revision=revision, token=token)
-        class_name = config["_class_name"]
-
-        for task_name, model_mapping in DIFFUSERS_TASKS_TO_MODEL_TYPES_TO_MODEL_CLASSES.items():
-            for model_type, model_class_name in model_mapping.items():
-                if model_class_name == class_name:
-                    inferred_model_type = model_type
-                    break
-            if inferred_model_type is not None:
-                break
 
     else:
         transformers_config = get_transformers_pretrained_config(
