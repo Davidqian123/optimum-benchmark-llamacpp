@@ -9,10 +9,6 @@ import pytest
 import torch
 
 from optimum_benchmark import Benchmark, BenchmarkConfig, InferenceConfig, ProcessConfig, PyTorchConfig, TrainingConfig
-from optimum_benchmark.backends.diffusers_utils import (
-    extract_diffusers_shapes_from_model,
-    get_diffusers_pretrained_config,
-)
 from optimum_benchmark.backends.timm_utils import extract_timm_shapes_from_config, get_timm_pretrained_config
 from optimum_benchmark.backends.transformers_utils import (
     extract_transformers_shapes_from_artifacts,
@@ -23,7 +19,6 @@ from optimum_benchmark.generators.dataset_generator import DatasetGenerator
 from optimum_benchmark.generators.input_generator import InputGenerator
 from optimum_benchmark.import_utils import get_git_revision_hash
 from optimum_benchmark.scenarios.inference.config import INPUT_SHAPES
-from optimum_benchmark.scenarios.training.config import DATASET_SHAPES
 from optimum_benchmark.system_utils import is_nvidia_system, is_rocm_system
 from optimum_benchmark.trackers import LatencyTracker, MemoryTracker
 

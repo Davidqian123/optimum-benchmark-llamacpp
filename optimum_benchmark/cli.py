@@ -9,23 +9,11 @@ from omegaconf import DictConfig, OmegaConf
 from . import (
     Benchmark,
     BenchmarkConfig,
-    EnergyStarConfig,
-    INCConfig,
     InferenceConfig,
     InlineConfig,
-    IPEXConfig,
     LlamaCppConfig,
-    LLMSwarmConfig,
-    ORTConfig,
-    OVConfig,
     ProcessConfig,
-    PyTorchConfig,
-    PyTXIConfig,
-    TorchORTConfig,
     TorchrunConfig,
-    TrainingConfig,
-    TRTLLMConfig,
-    VLLMConfig,
 )
 from .logging_utils import setup_logging
 
@@ -37,21 +25,9 @@ cs = ConfigStore.instance()
 # benchmark configuration
 cs.store(name="benchmark", node=BenchmarkConfig)
 # backends configurations
-cs.store(group="backend", name=IPEXConfig.name, node=IPEXConfig)
-cs.store(group="backend", name=OVConfig.name, node=OVConfig)
-cs.store(group="backend", name=PyTorchConfig.name, node=PyTorchConfig)
-cs.store(group="backend", name=ORTConfig.name, node=ORTConfig)
-cs.store(group="backend", name=TorchORTConfig.name, node=TorchORTConfig)
-cs.store(group="backend", name=TRTLLMConfig.name, node=TRTLLMConfig)
-cs.store(group="backend", name=INCConfig.name, node=INCConfig)
-cs.store(group="backend", name=PyTXIConfig.name, node=PyTXIConfig)
-cs.store(group="backend", name=LLMSwarmConfig.name, node=LLMSwarmConfig)
-cs.store(group="backend", name=VLLMConfig.name, node=VLLMConfig)
 cs.store(group="backend", name=LlamaCppConfig.name, node=LlamaCppConfig)
 # scenarios configurations
-cs.store(group="scenario", name=TrainingConfig.name, node=TrainingConfig)
 cs.store(group="scenario", name=InferenceConfig.name, node=InferenceConfig)
-cs.store(group="scenario", name=EnergyStarConfig.name, node=EnergyStarConfig)
 # launchers configurations
 cs.store(group="launcher", name=InlineConfig.name, node=InlineConfig)
 cs.store(group="launcher", name=ProcessConfig.name, node=ProcessConfig)

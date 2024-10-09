@@ -1,7 +1,7 @@
 from tempfile import TemporaryDirectory
 from typing import Any, Dict
 
-from llama_cpp import Llama
+from nexa.gguf.llama.llama import Llama
 
 from ..base import Backend
 from .config import LlamaCppConfig
@@ -27,9 +27,8 @@ class LlamaCppBackend(Backend[LlamaCppConfig]):
         Load the pretrained model from the given model name (normally GGUF, GGML)
         """
 
-        self.pretrained_model = Llama.from_pretrained(
-            repo_id=self.config.model,
-            filename=self.config.filename,
+        self.pretrained_model = Llama(
+            model_path=self.config.model,
             **self.llama_cpp_kwargs,
         )
 
