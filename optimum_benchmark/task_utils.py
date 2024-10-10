@@ -168,8 +168,8 @@ def infer_model_type_from_model_name_or_path(
 
     inferred_model_type = None
 
-    if library_name == "llama_cpp":
-        inferred_model_type = "llama_cpp"
+    if library_name == "nexa_backend":
+        inferred_model_type = "nexa_backend"
 
     else:
         transformers_config = get_transformers_pretrained_config(
