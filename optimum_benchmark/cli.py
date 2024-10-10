@@ -11,7 +11,7 @@ from . import (
     BenchmarkConfig,
     InferenceConfig,
     InlineConfig,
-    LlamaCppConfig,
+    NexaConfig,
     ProcessConfig,
     TorchrunConfig,
 )
@@ -25,7 +25,7 @@ cs = ConfigStore.instance()
 # benchmark configuration
 cs.store(name="benchmark", node=BenchmarkConfig)
 # backends configurations
-cs.store(group="backend", name=LlamaCppConfig.name, node=LlamaCppConfig)
+cs.store(group="backend", name=NexaConfig.name, node=NexaConfig)
 # scenarios configurations
 cs.store(group="scenario", name=InferenceConfig.name, node=InferenceConfig)
 # launchers configurations

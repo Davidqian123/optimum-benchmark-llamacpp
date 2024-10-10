@@ -1,6 +1,6 @@
 from .backends import (
     BackendConfig,
-    LlamaCppConfig,
+    NexaConfig,
 )
 from .benchmark.base import Benchmark
 from .benchmark.config import BenchmarkConfig
@@ -19,5 +19,5 @@ __all__ = [
     "ProcessConfig",
     "ScenarioConfig",
     "TorchrunConfig",
-    "LlamaCppConfig",
+    "NexaConfig",
 ]

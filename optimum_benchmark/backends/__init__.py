@@ -1,7 +1,7 @@
 from .config import BackendConfig
-from .llama_cpp.config import LlamaCppConfig
+from .nexa_backend.config import NexaConfig
 
 __all__ = [
     "BackendConfig",
-    "LlamaCppConfig",
+    "NexaConfig",
 ]

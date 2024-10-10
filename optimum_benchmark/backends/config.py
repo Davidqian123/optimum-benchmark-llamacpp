@@ -104,9 +104,9 @@ class BackendConfig(ABC):
             else:
                 raise RuntimeError("CUDA device is only supported on systems with NVIDIA or ROCm drivers.")
 
-        if self.library not in ["transformers", "diffusers", "timm", "llama_cpp"]:
+        if self.library not in ["transformers", "diffusers", "timm", "nexa_backend"]:
             raise ValueError(
-                f"`library` must be either `transformers`, `diffusers`, `timm` or `llama_cpp`, but got {self.library}"
+                f"`library` must be either `transformers`, `diffusers`, `timm` or `nexa_backend`, but got {self.library}"
             )
 
         if self.inter_op_num_threads is not None:
