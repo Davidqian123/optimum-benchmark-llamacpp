@@ -1,5 +1,0 @@
-hydra:
-  mode: MULTIRUN
-  sweeper:
-    params:
-      backend.no_weights: true,false

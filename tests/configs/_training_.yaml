@@ -1,6 +1,0 @@
-defaults:
-  - override scenario: training
-
-scenario:
-  max_steps: 5
-  warmup_steps: 2

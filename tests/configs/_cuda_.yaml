@@ -1,3 +1,0 @@
-backend:
-  device: cuda
-  device_ids: 0
