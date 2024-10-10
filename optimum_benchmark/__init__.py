@@ -5,7 +5,7 @@ from .backends import (
 from .benchmark.base import Benchmark
 from .benchmark.config import BenchmarkConfig
 from .benchmark.report import BenchmarkReport
-from .launchers import InlineConfig, LauncherConfig, ProcessConfig, TorchrunConfig
+from .launchers import InlineConfig, LauncherConfig, ProcessConfig
 from .scenarios import InferenceConfig, ScenarioConfig
 
 __all__ = [
@@ -18,6 +18,5 @@ __all__ = [
     "LauncherConfig",
     "ProcessConfig",
     "ScenarioConfig",
-    "TorchrunConfig",
     "NexaConfig",
 ]
