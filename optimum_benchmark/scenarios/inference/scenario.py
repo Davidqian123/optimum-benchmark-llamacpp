@@ -7,7 +7,7 @@ from ...backends.base import Backend, BackendConfigT
 from ...benchmark.report import BenchmarkReport
 from ...generators.input_generator import InputGenerator
 from ...trackers.energy import Efficiency, EnergyTracker
-from ...trackers.latency import LatencyTracker, PerTokenLatencyLogitsProcessor, Throughput
+from ...trackers.latency import LatencyTracker, Throughput
 from ...trackers.memory import MemoryTracker
 from ..base import Scenario
 from .config import InferenceConfig
