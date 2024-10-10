@@ -84,36 +84,3 @@ class Backend(Generic[BackendConfigT], ABC):
         It can be used to move the inputs to the correct device, or rename their keys.
         """
         return inputs
-
-    def load(self) -> None:
-        raise NotImplementedError("Backend must implement load method")
-
-    def forward(self, inputs: Dict[str, Any], kwargs: Dict[str, Any]) -> OrderedDict:
-        """
-        This method is used to perform the forward pass of the model.
-        """
-        raise NotImplementedError("Backend must implement forward method")
-
-    def prefill(self, inputs: Dict[str, Any], kwargs: Dict[str, Any]) -> OrderedDict:
-        """
-        This method is used to perform the prefill pass of the model.
-        """
-        raise NotImplementedError("Backend must implement prefill method")
-
-    def generate(self, inputs: Dict[str, Any], kwargs: Dict[str, Any]) -> OrderedDict:
-        """
-        This method is used to perform the generation pass of the model.
-        """
-        raise NotImplementedError("Backend must implement generate method")
-
-    def call(self, inputs: Dict[str, Any], kwargs: Dict[str, Any]) -> OrderedDict:
-        """
-        This method is used to call a whole pipeline.
-        """
-        raise NotImplementedError("Backend must implement call method")
-
-    def train(self, **kwargs) -> TrainerState:
-        """
-        This method is used to train the model.
-        """
-        raise NotImplementedError("Backend must implement train method")
