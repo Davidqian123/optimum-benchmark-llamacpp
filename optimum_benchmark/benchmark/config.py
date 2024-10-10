@@ -2,7 +2,6 @@ from dataclasses import dataclass, field
 from typing import Any, Dict
 
 from ..hub_utils import PushToHubMixin, classproperty
-from ..import_utils import get_hf_libs_info
 from ..system_utils import get_system_info
 
 
@@ -18,7 +17,7 @@ class BenchmarkConfig(PushToHubMixin):
     launcher: Any  # https://github.com/facebookresearch/hydra/issues/1722#issuecomment-883568386
 
     # ENVIRONMENT CONFIGURATION
-    environment: Dict[str, Any] = field(default_factory=lambda: {**get_system_info(), **get_hf_libs_info()})
+    environment: Dict[str, Any] = field(default_factory=lambda: {**get_system_info()})
 
     print_report: bool = False
     log_report: bool = True
