@@ -7,11 +7,6 @@ from typing import Any, Dict, Optional, TypeVar
 from psutil import cpu_count
 
 from ..system_utils import get_gpu_device_ids, is_nvidia_system, is_rocm_system
-from ..task_utils import (
-    infer_library_from_model_name_or_path,
-    infer_model_type_from_model_name_or_path,
-    infer_task_from_model_name_or_path,
-)
 
 LOGGER = getLogger("backend")
 
@@ -50,31 +45,6 @@ class BackendConfig(ABC):
 
         if self.processor is None:
             self.processor = self.model
-
-        # TODO: add cache_dir, token, etc. to these methods
-        if self.library is None:
-            self.library = infer_library_from_model_name_or_path(
-                self.model,
-                revision=self.model_kwargs.get("revision", None),
-                token=self.model_kwargs.get("token", None),
-            )
-
-        if self.task is None:
-            self.task = infer_task_from_model_name_or_path(
-                self.model,
-                self.library,
-                revision=self.model_kwargs.get("revision", None),
-                token=self.model_kwargs.get("token", None),
-            )
-
-        if self.model_type is None:
-            self.model_type = infer_model_type_from_model_name_or_path(
-                self.model,
-                self.library,
-                revision=self.model_kwargs.get("revision", None),
-                token=self.model_kwargs.get("token", None),
-                trust_remote_code=self.model_kwargs.get("trust_remote_code", False),
-            )
 
         if self.device is None:
             self.device = "cuda" if is_nvidia_system() or is_rocm_system() else "cpu"
