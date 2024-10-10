@@ -51,6 +51,7 @@ class Backend(Generic[BackendConfigT], ABC):
             self.model_shapes = extract_transformers_shapes_from_artifacts(
                 self.pretrained_config, self.pretrained_processor
             )
+        print("BrianDEBUG", self.model_shapes)
 
     def seed(self) -> None:
         set_seed(self.config.seed)

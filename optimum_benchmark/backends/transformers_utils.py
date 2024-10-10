@@ -5,12 +5,7 @@ from typing import Any, Dict, Optional, Union
 import torch
 import transformers
 from transformers import (
-    AutoConfig,
-    AutoFeatureExtractor,
-    AutoProcessor,
-    AutoTokenizer,
     FeatureExtractionMixin,
-    GenerationConfig,
     ImageProcessingMixin,
     PretrainedConfig,
     ProcessorMixin,
@@ -67,34 +62,6 @@ else:
     TASKS_TO_MODEL_TYPES_TO_MODEL_CLASSES = {}
 
 PretrainedProcessor = Union[FeatureExtractionMixin, ImageProcessingMixin, SpecialTokensMixin, ProcessorMixin]
-
-
-def get_transformers_pretrained_config(model: str, **kwargs) -> "PretrainedConfig":
-    # sometimes contains information about the model's input shapes that are not available in the config
-    return AutoConfig.from_pretrained(model, **kwargs)
-
-
-def get_transformers_generation_config(model: str, **kwargs) -> Optional["GenerationConfig"]:
-    try:
-        # sometimes contains information about the model's input shapes that are not available in the config
-        return GenerationConfig.from_pretrained(model, **kwargs)
-    except Exception:
-        return GenerationConfig()
-
-
-def get_transformers_pretrained_processor(model: str, **kwargs) -> Optional["PretrainedProcessor"]:
-    try:
-        # sometimes contains information about the model's input shapes that are not available in the config
-        return AutoProcessor.from_pretrained(model, **kwargs)
-    except Exception:
-        try:
-            return AutoFeatureExtractor.from_pretrained(model, **kwargs)
-        except Exception:
-            try:
-                return AutoTokenizer.from_pretrained(model, **kwargs)
-            except Exception:
-                return None
-
 
 def extract_transformers_shapes_from_artifacts(
     config: Optional["PretrainedConfig"] = None, processor: Optional["PretrainedProcessor"] = None
@@ -179,12 +146,6 @@ def extract_transformers_shapes_from_artifacts(
         shapes["num_queries"] = 2
 
     return shapes
-
-
-def get_transformers_automodel_loader_for_task(task: str):
-    model_loader_name = TASKS_TO_MODEL_LOADERS[task]
-    model_loader_class = getattr(transformers, model_loader_name)
-    return model_loader_class
 
 
 TORCH_INIT_FUNCTIONS = {
