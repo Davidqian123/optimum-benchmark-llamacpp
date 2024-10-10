@@ -1,6 +1,0 @@
-hydra:
-  mode: MULTIRUN
-  sweeper:
-    params:
-      backend.task: fill-mask,text-classification,token-classification,question-answering
-      backend.model: hf-internal-testing/tiny-random-BertModel,hf-internal-testing/tiny-random-RobertaModel

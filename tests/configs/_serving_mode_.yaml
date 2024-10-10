@@ -1,5 +1,0 @@
-hydra:
-  mode: MULTIRUN
-  sweeper:
-    params:
-      backend.serving_mode: online,offline

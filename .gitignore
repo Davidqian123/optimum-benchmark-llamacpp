@@ -1,2 +1,5 @@
 __pycache__/
 *.json
+optimum_benchmark.egg-info/
+*.log
+*.csv

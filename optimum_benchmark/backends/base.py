@@ -13,10 +13,6 @@ from .config import BackendConfigT
 from .transformers_utils import (
     PretrainedProcessor,
     extract_transformers_shapes_from_artifacts,
-    get_transformers_automodel_loader_for_task,
-    get_transformers_generation_config,
-    get_transformers_pretrained_config,
-    get_transformers_pretrained_processor,
 )
 
 if is_torch_available():

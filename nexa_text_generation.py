@@ -45,9 +45,6 @@ def run_power_inference(model_path: str, device: str, new_tokens: int):
     # Launch the benchmark with the specified configuration
     benchmark_report = Benchmark.launch(benchmark_config)
 
-    # Optionally, create a Benchmark object with the config and report
-    benchmark = Benchmark(config=benchmark_config, report=benchmark_report)
-
     # save artifacts to disk as json or csv files
     benchmark_report.save_csv(f"benchmark_report_{model_path}.csv") # or benchmark_report.save_json("benchmark_report.json")
 
