@@ -87,20 +87,6 @@ class ImageGenerator(TaskGenerator):
         )
 
 
-class AudioGenerator(TaskGenerator):
-    def input_values(self):
-        return self.generate_random_floats(
-            min_value=-1, max_value=1, shape=(self.shapes["batch_size"], self.shapes["sequence_length"])
-        )
-
-    def input_features(self):
-        return self.generate_random_floats(
-            min_value=-1,
-            max_value=1,
-            shape=(self.shapes["batch_size"], self.shapes["feature_size"], self.shapes["nb_max_frames"]),
-        )
-
-
 class TextClassificationGenerator(TextGenerator):
     def labels(self):
         return self.generate_random_integers(
@@ -343,18 +329,6 @@ class AutomaticSpeechRecognitionGenerator(AudioGenerator):
             dummy["labels"] = self.labels()
 
         return dummy
-
-
-class PromptGenerator(TaskGenerator):
-    def prompt(self):
-        return self.generate_random_strings(num_seq=self.shapes["batch_size"])
-
-    def __call__(self):
-        dummy = {}
-        dummy["prompt"] = self.prompt()
-
-        return dummy
-
 
 class FeatureExtractionGenerator(TextGenerator, ImageGenerator):
     def __call__(self):
