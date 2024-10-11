@@ -11,7 +11,6 @@ class NexaConfig(BackendConfig):
     version: Optional[str] = nexa_sdk_version()
     _target_: str = "optimum_benchmark.backends.nexa_backend.backend.NexaBackend"
 
-    no_weights: bool = False
     filename: Optional[str] = None
 
     def __post_init__(self):
@@ -19,9 +18,3 @@ class NexaConfig(BackendConfig):
         self.model_type = "nexa_backend"
 
         super().__post_init__()
-
-        if self.task != "text-generation":
-            raise NotImplementedError(f"Task {self.task} is not supported by Nexa backend.")
-
-        if self.no_weights:
-            raise NotImplementedError("`no_weights` benchmarking is not supported by Nexa backend.")
