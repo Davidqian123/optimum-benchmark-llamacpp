@@ -6,14 +6,10 @@ from typing import Any, ClassVar, Dict, Generic, Optional
 
 import transformers.utils.logging as transformers_logging
 from safetensors.torch import save_file
-from transformers import GenerationConfig, PretrainedConfig, PreTrainedModel, TrainerState, set_seed
+from transformers import set_seed
 
 from ..import_utils import is_torch_available
 from .config import BackendConfigT
-from .transformers_utils import (
-    PretrainedProcessor,
-    extract_transformers_shapes_from_artifacts,
-)
 
 if is_torch_available():
     import torch
@@ -25,12 +21,6 @@ class Backend(Generic[BackendConfigT], ABC):
     NAME: ClassVar[str]
 
     model_type: str
-    model_shapes: Dict[str, int]
-
-    pretrained_model: PreTrainedModel
-    pretrained_config: Optional[PretrainedConfig]
-    generation_config: Optional[GenerationConfig]
-    pretrained_processor: Optional[PretrainedProcessor]
 
     def __init__(self, config: BackendConfigT):
         self.config = config
@@ -48,10 +38,6 @@ class Backend(Generic[BackendConfigT], ABC):
             self.pretrained_config = None
             self.automodel_loader = None
             # TODO: need a custom method to extract shapes from gguf
-            self.model_shapes = extract_transformers_shapes_from_artifacts(
-                self.pretrained_config, self.pretrained_processor
-            )
-        print("BrianDEBUG", self.model_shapes)
 
     def seed(self) -> None:
         set_seed(self.config.seed)
