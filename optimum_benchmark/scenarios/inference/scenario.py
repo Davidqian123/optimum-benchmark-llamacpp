@@ -6,14 +6,11 @@ from transformers import LogitsProcessorList
 from ...backends.base import Backend, BackendConfigT
 from ...benchmark.report import BenchmarkReport
 from ...generators.input_generator import InputGenerator
-from ...task_utils import TEXT_GENERATION_TASKS
 from ...trackers.energy import Efficiency, EnergyTracker
-from ...trackers.latency import LatencyTracker, PerTokenLatencyLogitsProcessor, Throughput
+from ...trackers.latency import LatencyTracker, Throughput
 from ...trackers.memory import MemoryTracker
 from ..base import Scenario
 from .config import InferenceConfig
-
-PER_TOKEN_BACKENDS = ["pytorch", "onnxruntime", "openvino", "neural-compressor", "ipex"]
 
 TEXT_GENERATION_DEFAULT_KWARGS = {
     "num_return_sequences": 1,
@@ -50,7 +47,7 @@ class InferenceScenario(Scenario[InferenceConfig]):
     def run(self, backend: Backend[BackendConfigT]) -> BenchmarkReport:
         self.logger.info("\t+ Creating input generator")
         self.input_generator = InputGenerator(
-            task=backend.config.task, model_shapes=backend.model_shapes, input_shapes=self.config.input_shapes
+            task=backend.config.task, input_shapes=self.config.input_shapes
         )
 
         self.logger.info("\t+ Generating Text Generation inputs")

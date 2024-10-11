@@ -77,30 +77,6 @@ class TextGenerator(TaskGenerator):
     def requires_position_ids(self):
         return self.shapes["max_position_embeddings"] is not None
 
-class TextClassificationGenerator(TextGenerator):
-    def labels(self):
-        return self.generate_random_integers(
-            min_value=0, max_value=self.shapes["num_labels"] or DEFAULT_NUM_LABELS, shape=(self.shapes["batch_size"],)
-        )
-
-    def __call__(self):
-        dummy = {}
-
-        dummy["input_ids"] = self.input_ids()
-        dummy["attention_mask"] = self.attention_mask()
-
-        if self.requires_token_type_ids():
-            dummy["token_type_ids"] = self.token_type_ids()
-
-        if self.requires_position_ids():
-            dummy["position_ids"] = self.position_ids()
-
-        if self.with_labels:
-            dummy["labels"] = self.labels()
-
-        return dummy
-
-
 class TextGenerationGenerator(TextGenerator):
     def __call__(self):
         dummy = {}
@@ -113,20 +89,7 @@ class TextGenerationGenerator(TextGenerator):
         return dummy
 
 
-class Text2TextGenerationGenerator(TextGenerator):
-    def __call__(self):
-        dummy = {}
-        dummy["input_ids"] = self.input_ids()
-        dummy["attention_mask"] = self.attention_mask()
-
-        if self.with_labels:
-            dummy["labels"] = self.input_ids()
-
-        return dummy
-
 TASKS_TO_GENERATORS = {
     # transformers models tasks
-    "text-classification": TextClassificationGenerator,
     "text-generation": TextGenerationGenerator,
-    "text2text-generation": Text2TextGenerationGenerator,
 }
