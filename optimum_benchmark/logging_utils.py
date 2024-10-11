@@ -53,14 +53,3 @@ def setup_logging(
             )
 
     logging.config.dictConfig(logging_config)
-
-
-def run_subprocess_and_log_stream_output(logger: logging.Logger, args: List[str]) -> Popen:
-    popen = Popen(args, stdout=PIPE, stderr=STDOUT)
-
-    for line in iter(popen.stdout.readline, b""):
-        if line is not None:
-            logger.info(line.decode("utf-8").rstrip())
-
-    popen.wait()
-    return popen

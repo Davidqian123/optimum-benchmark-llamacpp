@@ -36,10 +36,7 @@ class NexaBackend(Backend[NexaConfig]):
         return input_shapes
 
     def prepare_inputs(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        if self.config.task == "text-generation":
-            return {"tokens": inputs["input_ids"].squeeze(0).tolist()}
-        else:
-            raise ValueError(f"Task {self.config.task} not supported by {self.NAME}")
+        return {"tokens": inputs["input_ids"].squeeze(0).tolist()}
 
     def prefill(self, inputs: Dict[str, Any], kwargs: Dict[str, Any]) -> list[int]:
         next(self.pretrained_model.generate(**inputs))
