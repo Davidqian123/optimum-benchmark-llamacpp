@@ -1,12 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict
 
-from ..hub_utils import PushToHubMixin, classproperty
 from ..system_utils import get_system_info
 
 
 @dataclass
-class BenchmarkConfig(PushToHubMixin):
+class BenchmarkConfig:
     name: str
 
     # BACKEND CONFIGURATION
@@ -22,6 +21,10 @@ class BenchmarkConfig(PushToHubMixin):
     print_report: bool = False
     log_report: bool = True
 
-    @classproperty
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "BenchmarkConfig":
+        return cls(**data)
+
+    @property
     def default_filename(cls) -> str:
         return "benchmark_config.json"

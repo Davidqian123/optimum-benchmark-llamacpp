@@ -4,8 +4,7 @@ import string
 from abc import ABC
 from typing import List, Tuple
 
-# TODO: drop torch dependency and use numpy instead
-import torch
+import numpy as np
 
 LOGGER = logging.getLogger("generators")
 
@@ -21,15 +20,15 @@ class TaskGenerator(ABC):
 
     @staticmethod
     def generate_random_integers(min_value: int, max_value: int, shape: Tuple[int]):
-        return torch.randint(min_value, max_value, shape)
+        return np.random.randint(min_value, max_value, size=shape)
 
     @staticmethod
     def generate_random_floats(min_value: float, max_value: float, shape: Tuple[int]):
-        return torch.rand(shape) * (max_value - min_value) + min_value
+        return np.random.rand(*shape) * (max_value - min_value) + min_value
 
     @staticmethod
     def generate_ranges(start: int, stop: int, shape: Tuple[int]):
-        return torch.arange(start, stop).repeat(shape[0], 1)
+        return np.tile(np.arange(start, stop), (shape[0], 1))
 
     @staticmethod
     def generate_random_strings(num_seq: int) -> List[str]:
@@ -90,6 +89,5 @@ class TextGenerationGenerator(TextGenerator):
 
 
 TASKS_TO_GENERATORS = {
-    # transformers models tasks
     "text-generation": TextGenerationGenerator,
 }

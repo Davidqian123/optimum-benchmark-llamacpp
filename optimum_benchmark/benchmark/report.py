@@ -1,11 +1,12 @@
-from dataclasses import dataclass, make_dataclass
+from dataclasses import dataclass, make_dataclass, asdict
+from flatten_dict import flatten
 from logging import getLogger
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
+from pathlib import Path
 
 from rich.console import Console
 from rich.markdown import Markdown
-
-from ..hub_utils import PushToHubMixin, classproperty
+import pandas as pd
 from ..trackers.energy import Efficiency, Energy
 from ..trackers.latency import Latency, Throughput
 from ..trackers.memory import Memory
@@ -82,7 +83,7 @@ class TargetMeasurements:
 
 
 @dataclass
-class BenchmarkReport(PushToHubMixin):
+class BenchmarkReport:
     @classmethod
     def from_list(cls, targets: List[str]) -> "BenchmarkReport":
         return cls.from_dict({target: None for target in targets})
@@ -90,7 +91,15 @@ class BenchmarkReport(PushToHubMixin):
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "BenchmarkReport":
         return make_dataclass(cls_name=cls.__name__, fields=data.keys(), bases=(cls,))(**data)
+    
+    def to_dict(self, flat=False) -> Dict[str, Any]:
+        data = asdict(self)
 
+        if flat:
+            data = flatten(data, reducer="dot")
+
+        return data
+    
     def __post_init__(self):
         for target in self.to_dict().keys():
             if getattr(self, target) is None:
@@ -133,6 +142,21 @@ class BenchmarkReport(PushToHubMixin):
         with open(filename, mode="w") as f:
             f.write(self.to_markdown_text())
 
+    def to_dict(self, flat=False) -> Dict[str, Any]:
+        data = asdict(self)
+
+        if flat:
+            data = flatten(data, reducer="dot")
+
+        return data
+
+    def to_dataframe(self) -> pd.DataFrame:
+        flat_dict_data = self.to_dict(flat=True)
+        return pd.DataFrame.from_dict(flat_dict_data, orient="index").T    
+
+    def save_csv(self, path: Union[str, Path]) -> None:
+        self.to_dataframe().to_csv(path, index=False)
+
     def log(self):
         for line in self.to_plain_text().split("\n"):
             if line:
@@ -141,6 +165,6 @@ class BenchmarkReport(PushToHubMixin):
     def print(self):
         CONSOLE.print(Markdown(self.to_markdown_text()))
 
-    @classproperty
+    @property
     def default_filename(self) -> str:
         return "benchmark_report.json"

@@ -8,10 +8,8 @@ from typing import List, Literal, Optional, Union
 from rich.console import Console
 from rich.markdown import Markdown
 
-from ..import_utils import is_codecarbon_available, is_torch_available
+from ..import_utils import is_codecarbon_available
 
-if is_torch_available():
-    import torch
 
 if is_codecarbon_available():
     from codecarbon import EmissionsTracker, OfflineEmissionsTracker
@@ -152,7 +150,6 @@ class EnergyTracker:
         self.device_ids = device_ids
 
         self.is_gpu = self.device == "cuda"
-        self.is_pytorch_cuda = (self.backend, self.device) == ("pytorch", "cuda")
 
         LOGGER.info("\t\t+ Tracking RAM and CPU energy consumption")
 
@@ -223,15 +220,10 @@ class EnergyTracker:
 
     @contextmanager
     def track(self, file_prefix: str = "task"):
-        if self.is_pytorch_cuda:
-            torch.cuda.synchronize()
 
         self.emission_tracker.start_task()
 
         yield
-
-        if self.is_pytorch_cuda:
-            torch.cuda.synchronize()
 
         emission_data: EmissionsData = self.emission_tracker.stop_task()
 

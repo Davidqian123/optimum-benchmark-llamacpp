@@ -15,12 +15,8 @@ except Exception as error:
 
 MIN_OPTIMUM_VERSION = "1.18.0"
 INSTALL_REQUIRES = [
-    # HF dependencies
-    "transformers",
-    "accelerate",
     # Hydra
     "hydra-core",
-    "omegaconf",
     # CPU
     "psutil",
     # Reporting
@@ -65,7 +61,6 @@ EXTRAS_REQUIRE = {
     # optional dependencies
     "autoawq": ["autoawq"],
     "auto-gptq": ["optimum", "auto-gptq"],
-    "sentence-transformers": ["sentence-transformers"],
     "bitsandbytes": ["bitsandbytes"],
     "codecarbon": ["codecarbon"],
     "flash-attn": ["flash-attn"],
@@ -81,9 +76,7 @@ setup(
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     entry_points={"console_scripts": ["optimum-benchmark=optimum_benchmark.cli:main"]},
-    description="Optimum-Benchmark is a unified multi-backend utility for benchmarking "
-    "Transformers, Timm, Diffusers and Sentence-Transformers with full support of "
-    "Optimum's hardware optimizations & quantization schemes.",
+    description="Optimum-Benchmark llama.cpp backend",
     url="https://github.com/huggingface/optimum-benchmark",
     classifiers=[
         "Intended Audience :: Education",
@@ -96,10 +89,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
-    keywords="benchmark, transformers, quantization, pruning, optimization, training, inference, onnx, onnx runtime, intel, "
-    "habana, graphcore, neural compressor, ipex, ipu, hpu, llm-swarm, py-txi, vllm, llama-cpp, auto-gptq, autoawq, "
-    "sentence-transformers, bitsandbytes, codecarbon, flash-attn, deepspeed, diffusers, timm, peft",
-    long_description=open("README.md", "r", encoding="utf-8").read(),
+    keywords="benchmark llama-cpp",
     long_description_content_type="text/markdown",
     author="HuggingFace Inc. Special Ops Team",
     include_package_data=True,

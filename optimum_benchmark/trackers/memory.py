@@ -13,8 +13,8 @@ from ..import_utils import (
     is_amdsmi_available,
     is_pynvml_available,
     is_pyrsmi_available,
-    is_torch_available,
 )
+
 from ..system_utils import is_nvidia_system, is_rocm_system
 
 if is_rocm_system() and is_pyrsmi_available():
@@ -26,9 +26,6 @@ if is_nvidia_system() and is_pynvml_available():
 
 if is_rocm_system() and is_amdsmi_available():
     import amdsmi  # type: ignore
-
-if is_torch_available():
-    import torch
 
 import psutil
 
@@ -130,7 +127,6 @@ class MemoryTracker:
         self.monitored_pid = os.getpid()
 
         self.is_gpu = device == "cuda"
-        self.is_pytorch_cuda = (self.backend, self.device) == ("pytorch", "cuda")
 
         LOGGER.info(f"\t\t+ Tracking RAM memory of process {self.monitored_pid}")
 
@@ -148,16 +144,6 @@ class MemoryTracker:
 
             LOGGER.info(f"\t\t+ Tracking GPU memory of devices {self.device_ids}")
 
-        if self.is_pytorch_cuda:
-            self.num_pytorch_devices = torch.cuda.device_count()
-            if len(self.device_ids) != self.num_pytorch_devices:
-                raise ValueError(
-                    "The number of target GPU devices and Pytorch's GPU device count do not match. "
-                    f"Got {len(self.device_ids)} and {self.num_pytorch_devices} respectively."
-                )
-
-            LOGGER.info(f"\t\t+ Tracking Allocated/Reserved memory of {self.num_pytorch_devices} Pytorch CUDA devices")
-
         self.max_ram_memory = None
         self.max_global_vram_memory = None
         self.max_process_vram_memory = None
@@ -173,35 +159,10 @@ class MemoryTracker:
 
     @contextmanager
     def track(self):
-        if self.is_pytorch_cuda:
-            yield from self._cuda_pytorch_memory()
-        elif self.is_gpu:
+        if self.is_gpu:
             yield from self._gpu_memory()
         else:
             yield from self._cpu_memory()
-
-    def _cuda_pytorch_memory(self):
-        self.max_allocated_memory = 0
-        self.max_reserved_memory = 0
-
-        for device in range(self.num_pytorch_devices):
-            try:
-                torch.cuda.reset_peak_memory_stats(device=device)
-            except Exception as e:
-                LOGGER.warning(f"\t\t+ Could not reset max memory stats for device {device}: {e}")
-
-        torch.cuda.synchronize()
-
-        yield from self._gpu_memory()
-
-        torch.cuda.synchronize()
-
-        for device in range(self.num_pytorch_devices):
-            try:
-                self.max_allocated_memory += torch.cuda.max_memory_allocated(device=device) / 1e6
-                self.max_reserved_memory += torch.cuda.max_memory_reserved(device=device) / 1e6
-            except Exception as e:
-                LOGGER.warning(f"\t\t+ Could not get max memory stats for device {device}: {e}")
 
     def _gpu_memory(self):
         child_connection, parent_connection = Pipe()

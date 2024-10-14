@@ -1,5 +1,4 @@
 from .backends import (
-    BackendConfig,
     NexaConfig,
 )
 from .benchmark.base import Benchmark
@@ -9,7 +8,6 @@ from .launchers import LauncherConfig, ProcessConfig
 from .scenarios import InferenceConfig, ScenarioConfig
 
 __all__ = [
-    "BackendConfig",
     "Benchmark",
     "BenchmarkConfig",
     "BenchmarkReport",

@@ -1,18 +1,20 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from logging import getLogger
-from typing import TYPE_CHECKING, Type
+from pathlib import Path
+from typing import TYPE_CHECKING, Type, Union, Dict, Any
 
+import pandas as pd
+from flatten_dict import flatten
 from hydra.utils import get_class
 
-from ..backends.config import BackendConfig
-from ..hub_utils import PushToHubMixin, classproperty
+from ..backends.config import NexaConfig
 from ..launchers import LauncherConfig
 from ..scenarios import ScenarioConfig
 from .config import BenchmarkConfig
 from .report import BenchmarkReport
 
 if TYPE_CHECKING:
-    from ..backends.base import Backend
+    from ..backends.nexa_backend import NexaBackend
     from ..launchers.base import Launcher
     from ..scenarios.base import Scenario
 
@@ -21,7 +23,7 @@ LOGGER = getLogger("benchmark")
 
 
 @dataclass
-class Benchmark(PushToHubMixin):
+class Benchmark:
     config: BenchmarkConfig
     report: BenchmarkReport
 
@@ -65,9 +67,9 @@ class Benchmark(PushToHubMixin):
         """
 
         # Allocate requested backend
-        backend_config: BackendConfig = config.backend
-        backend_factory: Type[Backend] = get_class(backend_config._target_)
-        backend: Backend = backend_factory(backend_config)
+        backend_config: NexaConfig = config.backend
+        backend_factory: Type[NexaBackend] = get_class(backend_config._target_)
+        backend: NexaBackend = backend_factory(backend_config)
 
         # Allocate requested scenario
         scenario_config: ScenarioConfig = config.scenario
@@ -79,6 +81,21 @@ class Benchmark(PushToHubMixin):
 
         return report
 
-    @classproperty
-    def default_filename(cls) -> str:
+    def to_dict(self, flat=False) -> Dict[str, Any]:
+        data = asdict(self)
+
+        if flat:
+            data = flatten(data, reducer="dot")
+
+        return data
+
+    def to_dataframe(self) -> pd.DataFrame:
+        flat_dict_data = self.to_dict(flat=True)
+        return pd.DataFrame.from_dict(flat_dict_data, orient="index").T    
+
+    def save_csv(self, path: Union[str, Path]) -> None:
+        self.to_dataframe().to_csv(path, index=False)
+
+    @property
+    def default_filename(self) -> str:
         return "benchmark.json"
