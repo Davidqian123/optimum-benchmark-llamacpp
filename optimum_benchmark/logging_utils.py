@@ -1,7 +1,6 @@
 import logging
 import logging.config
-from subprocess import PIPE, STDOUT, Popen
-from typing import List, Optional
+from typing import Optional
 
 
 def setup_logging(

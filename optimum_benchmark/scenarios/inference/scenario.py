@@ -1,9 +1,7 @@
 import time
 from contextlib import ExitStack
 
-from transformers import LogitsProcessorList
-
-from ...backends.base import Backend, BackendConfigT
+from ...backends.nexa_backend import NexaBackend
 from ...benchmark.report import BenchmarkReport
 from ...generators.input_generator import InputGenerator
 from ...trackers.energy import Efficiency, EnergyTracker
@@ -44,7 +42,7 @@ class InferenceScenario(Scenario[InferenceConfig]):
     def __init__(self, config: InferenceConfig) -> None:
         super().__init__(config)
 
-    def run(self, backend: Backend[BackendConfigT]) -> BenchmarkReport:
+    def run(self, backend: NexaBackend) -> BenchmarkReport:
         self.logger.info("\t+ Creating input generator")
         self.input_generator = InputGenerator(
             task=backend.config.task, input_shapes=self.config.input_shapes
@@ -83,14 +81,14 @@ class InferenceScenario(Scenario[InferenceConfig]):
         return self.report
 
     # Warmup
-    def warmup_text_generation(self, backend: Backend[BackendConfigT]):
+    def warmup_text_generation(self, backend: NexaBackend):
         self.logger.info("\t+ Warming up backend for Text Generation")
         _ = backend.generate(self.inputs, self.config.generate_kwargs)
         for _ in range(self.config.warmup_runs):
             _ = backend.generate(self.inputs, {**self.config.generate_kwargs, **TEXT_GENERATION_WARMUP_OVERRIDES})
 
     # Loading tracking
-    def run_model_loading_tracking(self, backend: Backend[BackendConfigT]):
+    def run_model_loading_tracking(self, backend: NexaBackend):
         self.logger.info("\t+ Running model loading tracking")
 
         if self.config.memory:
@@ -114,7 +112,7 @@ class InferenceScenario(Scenario[InferenceConfig]):
             self.report.load.memory = memory_tracker.get_max_memory()
 
     ## Memory tracking
-    def run_text_generation_memory_tracking(self, backend: Backend[BackendConfigT]):
+    def run_text_generation_memory_tracking(self, backend: NexaBackend):
         self.logger.info("\t+ Running Text Generation memory tracking")
         self.memory_tracker = MemoryTracker(
             backend=backend.config.name, device=backend.config.device, device_ids=backend.config.device_ids
@@ -131,7 +129,7 @@ class InferenceScenario(Scenario[InferenceConfig]):
 
         self.report.decode.memory = self.memory_tracker.get_max_memory()
 
-    def run_inference_memory_tracking(self, backend: Backend[BackendConfigT]):
+    def run_inference_memory_tracking(self, backend: NexaBackend):
         self.logger.info("\t+ Running Inference memory tracking")
         self.memory_tracker = MemoryTracker(
             backend=backend.config.name, device=backend.config.device, device_ids=backend.config.device_ids
@@ -143,7 +141,7 @@ class InferenceScenario(Scenario[InferenceConfig]):
         self.report.forward.memory = self.memory_tracker.get_max_memory()
 
     ## Latency tracking
-    def run_text_generation_latency_tracking(self, backend: Backend[BackendConfigT]):
+    def run_text_generation_latency_tracking(self, backend: NexaBackend):
         self.logger.info("\t+ Running Text Generation latency tracking")
         latency_tracker = LatencyTracker(backend=backend.config.name, device=backend.config.device)
         prefill_kwargs = {**self.config.generate_kwargs, **TEXT_GENERATION_PREFILL_OVERRIDES}
@@ -175,7 +173,7 @@ class InferenceScenario(Scenario[InferenceConfig]):
         )
 
     ## Energy tracking
-    def run_text_generation_energy_tracking(self, backend: Backend[BackendConfigT]):
+    def run_text_generation_energy_tracking(self, backend: NexaBackend):
         self.logger.info("\t+ Running Text Generation energy tracking")
         energy_tracker = EnergyTracker(
             backend=backend.config.name, device=backend.config.device, device_ids=backend.config.device_ids

@@ -1,7 +1,7 @@
-from .config import BackendConfig
-from .nexa_backend.config import NexaConfig
+from .nexa_backend import NexaBackend
+from .config import NexaConfig
 
 __all__ = [
-    "BackendConfig",
+    "NexaBackend",
     "NexaConfig",
 ]

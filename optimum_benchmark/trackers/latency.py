@@ -5,10 +5,8 @@ from logging import getLogger
 from typing import List, Literal, Optional, Union
 
 import numpy as np
-import torch
 from rich.console import Console
 from rich.markdown import Markdown
-from transformers import LogitsProcessor, TrainerCallback
 
 CONSOLE = Console()
 LOGGER = getLogger("latency")
@@ -165,16 +163,11 @@ class LatencyTracker:
         self.device = device
         self.backend = backend
 
-        self.is_pytorch_cuda = (self.backend, self.device) == ("pytorch", "cuda")
-
-        if self.is_pytorch_cuda:
-            LOGGER.info("\t\t+ Tracking latency using Pytorch CUDA events")
-        else:
-            LOGGER.info("\t\t+ Tracking latency using CPU performance counter")
+        LOGGER.info("\t\t+ Tracking latency using CPU performance counter")
 
         self.start_time: Optional[float] = None
-        self.start_events: List[Union[float, torch.cuda.Event]] = []
-        self.end_events: List[Union[float, torch.cuda.Event]] = []
+        self.start_events: List[float] = []
+        self.end_events: List[float] = []
 
     def reset(self):
         self.start_time = None
@@ -183,19 +176,7 @@ class LatencyTracker:
 
     @contextmanager
     def track(self):
-        if self.is_pytorch_cuda:
-            yield from self._pytorch_cuda_latency()
-        else:
-            yield from self._cpu_latency()
-
-    def _pytorch_cuda_latency(self):
-        self.start_events.append(torch.cuda.Event(enable_timing=True))
-        self.start_events[-1].record()
-
-        yield
-
-        self.end_events.append(torch.cuda.Event(enable_timing=True))
-        self.end_events[-1].record()
+        yield from self._cpu_latency()
 
     def _cpu_latency(self):
         self.start_events.append(time.perf_counter())
@@ -205,14 +186,7 @@ class LatencyTracker:
         self.end_events.append(time.perf_counter())
 
     def get_latency(self) -> Latency:
-        if self.is_pytorch_cuda:
-            torch.cuda.synchronize()
-
-            latencies_list = [
-                self.start_events[i].elapsed_time(self.end_events[i]) / 1e3 for i in range(len(self.start_events))
-            ]
-        else:
-            latencies_list = [(self.end_events[i] - self.start_events[i]) for i in range(len(self.start_events))]
+        latencies_list = [(self.end_events[i] - self.start_events[i]) for i in range(len(self.start_events))]
 
         assert not any(
             latency < 0 for latency in latencies_list

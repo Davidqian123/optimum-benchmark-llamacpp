@@ -1,7 +1,6 @@
 import importlib.metadata
 import importlib.util
 
-_torch_available = importlib.util.find_spec("torch") is not None
 _pynvml_available = importlib.util.find_spec("pynvml") is not None
 _codecarbon_available = importlib.util.find_spec("codecarbon") is not None
 _amdsmi_available = importlib.util.find_spec("amdsmi") is not None
@@ -24,10 +23,6 @@ def is_pynvml_available():
 
 def is_amdsmi_available():
     return _amdsmi_available
-
-
-def is_torch_available():
-    return _torch_available
 
 def is_codecarbon_available():
     return _codecarbon_available
